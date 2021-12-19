@@ -5,7 +5,9 @@ import frames
 
 def run(movie_path: Path, n_clusters: int):
     """
-    Wrapper for program functions
+
+    :param movie_path:
+    :param n_clusters:
     :return:
     """
     assert movie_path.is_file(), "File does not exist"
@@ -34,6 +36,16 @@ def run(movie_path: Path, n_clusters: int):
 
 
 def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
+    """
+    Analyze average color of each frame. Build clusters and output one screenshot each.
+    :param movie_path:
+    Path of the movie file
+    :param n_clusters:
+    number of clusters
+    :param skip_frames:
+    number of frames to skip, severely enhances speed
+    :return:
+    """
     assert movie_path.is_file(), "File does not exist"
     print('Opening movie %s' % str(movie_path))
     movie = cv.VideoCapture(str(movie_path), cv.CAP_ANY)
@@ -49,7 +61,7 @@ def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
         avg_color = frames.get_avg_color(frame)
         color_lst.append(avg_color)
         current_frame += skip_frames + 1
-        print("Current frame: %i" % current_frame, end='\r')
+        print("Current frame: %i" % current_frame)
         movie.set(cv.CAP_PROP_POS_FRAMES, current_frame - 1)
     list_cluster = frames.get_list_cluster(color_lst, n_clusters)
     frame_list = []
@@ -72,5 +84,5 @@ def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
 
 if __name__ == '__main__':
     # run function here
-    m_path = Path('FLCL_Progressive_02.mkv')
-    run_light(m_path, 4, 99)
+    m_path = Path('april_story.mkv')
+    run_light(m_path, 4, 59)
