@@ -5,10 +5,16 @@ import main
 from pathlib import Path
 
 
-class GUI:
+class GUI(tk.Tk):
     filename = ''
 
     def __init__(self):
+        super().__init__()
+        self.title("moscg")
+        self.clusters = tk.IntVar()
+        self.skip_frames = tk.IntVar()
+        self.desc = tk.StringVar()
+
         self.draw()
 
     def select_file(self):
@@ -20,19 +26,29 @@ class GUI:
         if self.filename == '':
             showinfo("Error", "Select a video file!")
         else:
-            main.run_light(Path(self.filename), 4, 59)
+            main.run_light(Path(self.filename), self.clusters.get(), self.skip_frames.get())
 
     def draw(self):
-        window = tk.Tk()
-        text = tk.Label(text="Movie screen grabber. Choose a movie file to proceed.")
-        text.pack()
-        btn_file = tk.Button(text="Select movie file", command=self.select_file)
-        btn_file.pack()
-        btn_run = tk.Button(text="Run", command=self.run)
-        btn_run.pack()
+        self.desc.set("Movie screen grabber. Choose a movie file to proceed.")
+        lbl_desc = tk.Label(textvariable=self.desc)
+        lbl_cluster = tk.Label(text="Number of screenshots:")
+        lbl_skip = tk.Label(text="Number of skipped frames:")
 
-        window.mainloop()
+        btn_file = tk.Button(text="Select movie file", command=self.select_file)
+        btn_run = tk.Button(text="Run", command=self.run)
+
+        ent_cluster = tk.Entry(textvariable=self.clusters)
+        ent_skip = tk.Entry(textvariable=self.skip_frames)
+
+        lbl_desc.grid(row=0, column=0, padx=5, pady=5)
+        lbl_cluster.grid(row=1, column=0, padx=5, pady=5)
+        ent_cluster.grid(row=1, column=1, padx=5, pady=5)
+        lbl_skip.grid(row=2, column=0, padx=5, pady=5)
+        ent_skip.grid(row=2, column=1, padx=5, pady=5)
+        btn_file.grid(row=3, column=0, padx=5, pady=5)
+        btn_run.grid(row=3, column=1, padx=5, pady=5)
 
 
 if __name__ == '__main__':
-    GUI()
+    gui = GUI()
+    gui.mainloop()
