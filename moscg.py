@@ -49,6 +49,10 @@ class GUI(tk.Tk):
         btn_run.grid(row=3, column=1, padx=5, pady=5)
 
 
-if __name__ == '__main__':
+def main_fct():
     gui = GUI()
     gui.mainloop()
+
+
+if __name__ == '__main__':
+    main_fct()

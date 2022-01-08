@@ -58,7 +58,7 @@ def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-        avg_color = frames.get_avg_color(frame)
+        avg_color = frames.get_color_avg(frame)
         color_lst.append(avg_color)
         current_frame += skip_frames + 1
         print("Current frame: %i" % current_frame)

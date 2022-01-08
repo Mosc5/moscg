@@ -14,7 +14,7 @@ def get_color_cluster(frame: np.ndarray, num_clusters: int):
     return clt
 
 
-def get_avg_color(frame):
+def get_color_avg(frame):
     image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     avg_row_col = np.average(image, axis=0)
     avg_color = np.average(avg_row_col, axis=0)
