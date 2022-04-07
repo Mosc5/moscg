@@ -11,8 +11,8 @@ class GUI(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("moscg")
-        self.clusters = tk.IntVar()
-        self.skip_frames = tk.IntVar()
+        self.clusters = tk.IntVar(value=4)
+        self.skip_frames = tk.IntVar(value=99)
         self.desc = tk.StringVar()
 
         self.draw()
@@ -34,11 +34,11 @@ class GUI(tk.Tk):
         lbl_cluster = tk.Label(text="Number of screenshots:")
         lbl_skip = tk.Label(text="Number of skipped frames:")
 
-        btn_file = tk.Button(text="Select movie file", command=self.select_file)
-        btn_run = tk.Button(text="Run", command=self.run)
-
         ent_cluster = tk.Entry(textvariable=self.clusters)
         ent_skip = tk.Entry(textvariable=self.skip_frames)
+
+        btn_file = tk.Button(text="Select movie file", command=self.select_file)
+        btn_run = tk.Button(text="Run", command=self.run)
 
         lbl_desc.grid(row=0, column=0, padx=5, pady=5)
         lbl_cluster.grid(row=1, column=0, padx=5, pady=5)
