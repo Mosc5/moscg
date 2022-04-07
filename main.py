@@ -1,6 +1,7 @@
 import cv2 as cv
 from pathlib import Path
 import frames
+import argparse
 
 
 def run(movie_path: Path, n_clusters: int):
@@ -82,7 +83,17 @@ def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
     cv.destroyAllWindows()
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Movie screen grabber")
+    parser.add_argument('scenario', type=str,
+                        help='Set the Path of the video file.')
+    parser.add_argument('--num', '-n', nargs='?', type=int, default=4,
+                        help='Number of screenshots.')
+    parser.add_argument('--skip', '-s', nargs='?', type=int, default=99,
+                        help='Number of skipped frames.')
+    p_args = parser.parse_args()
+    run_light(Path(p_args.scenario), p_args.num, p_args.skip)
+
+
 if __name__ == '__main__':
-    # run function here
-    m_path = Path('april_story.mkv')
-    run_light(m_path, 4, 59)
+    main()
