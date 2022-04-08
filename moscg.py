@@ -20,6 +20,7 @@ class Moscg:
             assert self.movie_path.is_file(), "Movie file does not exist"
             print('Opening movie %s' % str(self.movie_path))
             self.movie = cv.VideoCapture(str(self.movie_path), cv.CAP_ANY)
+        return self.movie
 
     def get_list_cluster(self, lst):
         clt = KMeans(self.num_cluster)
@@ -66,50 +67,34 @@ class Moscg:
         cv.destroyAllWindows()
 
 
-# TODO: implement the following function in OOP
-def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
+# TODO: implement hist run function in OOP
+def run_hist(movie_path: Path, n_clusters: int):
     """
-    Analyze average color of each frame. Build clusters and output one screenshot each.
     :param movie_path:
-    Path of the movie file
     :param n_clusters:
-    number of clusters
-    :param skip_frames:
-    number of frames to skip, severely enhances speed
     :return:
     """
     assert movie_path.is_file(), "File does not exist"
     print('Opening movie %s' % str(movie_path))
     movie = cv.VideoCapture(str(movie_path), cv.CAP_ANY)
-    color_lst = []
+    cluster_lst = []
     print('Analyzing frames...')
-    current_frame = 0
     while movie.isOpened():
         ret, frame = movie.read()
         # if frame is read correctly ret is True
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-        avg_color = frame.get_color_avg(frame)
-        color_lst.append(avg_color)
-        current_frame += skip_frames + 1
-        print("Current frame: %i" % current_frame)
-        movie.set(cv.CAP_PROP_POS_FRAMES, current_frame - 1)
-    list_cluster = frame.get_list_cluster(color_lst, n_clusters)
-    frame_list = []
-    print('Finding best matches...')
-    for arr in list_cluster.cluster_centers_:
-        lowest_dist = 1000
-        frame_number = 0
-        for i, color in enumerate(color_lst):
-            dist = frame.array_distance(color, arr)
-            if dist < lowest_dist:
-                lowest_dist = dist
-                frame_number = i
-        frame_list.append(frame_number)
-    print('Saving screenshots...')
-    for image in frame_list:
-        frame.save_screenshot(movie, image, skip_frames, movie_path.stem)
+        # cluster = frames.get_color_cluster(frame, n_clusters)
+        # cluster_lst.append(cluster)
+        # hist = frames.centroid_histogram(cluster)
+        # bar = frames.plot_colors(hist, cluster.cluster_centers_)
+        # # show our color bar
+        # plt.figure()
+        # plt.axis("off")
+        # plt.imshow(bar)
+        # plt.show()
+
     movie.release()
     cv.destroyAllWindows()
 
