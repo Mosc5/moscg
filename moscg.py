@@ -1,58 +1,99 @@
-import tkinter as tk
-from tkinter.filedialog import askopenfilename
-from tkinter.messagebox import showinfo
-import main
+import cv2 as cv
 from pathlib import Path
+import frames
+import argparse
 
 
-class GUI(tk.Tk):
-    filename = ''
+def run(movie_path: Path, n_clusters: int):
+    """
 
-    def __init__(self):
-        super().__init__()
-        self.title("moscg")
-        self.clusters = tk.IntVar(value=4)
-        self.skip_frames = tk.IntVar(value=99)
-        self.desc = tk.StringVar()
+    :param movie_path:
+    :param n_clusters:
+    :return:
+    """
+    assert movie_path.is_file(), "File does not exist"
+    print('Opening movie %s' % str(movie_path))
+    movie = cv.VideoCapture(str(movie_path), cv.CAP_ANY)
+    cluster_lst = []
+    print('Analyzing frames...')
+    while movie.isOpened():
+        ret, frame = movie.read()
+        # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
+        # cluster = frames.get_color_cluster(frame, n_clusters)
+        # cluster_lst.append(cluster)
+        # hist = frames.centroid_histogram(cluster)
+        # bar = frames.plot_colors(hist, cluster.cluster_centers_)
+        # # show our color bar
+        # plt.figure()
+        # plt.axis("off")
+        # plt.imshow(bar)
+        # plt.show()
 
-        self.draw()
-
-    def select_file(self):
-        self.filename = askopenfilename(
-            title='Open a file',
-            initialdir='.')
-
-    def run(self):
-        if self.filename == '':
-            showinfo("Error", "Select a video file!")
-        else:
-            main.run_light(Path(self.filename), self.clusters.get(), self.skip_frames.get())
-
-    def draw(self):
-        self.desc.set("Movie screen grabber. Choose a movie file to proceed.")
-        lbl_desc = tk.Label(textvariable=self.desc)
-        lbl_cluster = tk.Label(text="Number of screenshots:")
-        lbl_skip = tk.Label(text="Number of skipped frames:")
-
-        ent_cluster = tk.Entry(textvariable=self.clusters)
-        ent_skip = tk.Entry(textvariable=self.skip_frames)
-
-        btn_file = tk.Button(text="Select movie file", command=self.select_file)
-        btn_run = tk.Button(text="Run", command=self.run)
-
-        lbl_desc.grid(row=0, column=0, padx=5, pady=5)
-        lbl_cluster.grid(row=1, column=0, padx=5, pady=5)
-        ent_cluster.grid(row=1, column=1, padx=5, pady=5)
-        lbl_skip.grid(row=2, column=0, padx=5, pady=5)
-        ent_skip.grid(row=2, column=1, padx=5, pady=5)
-        btn_file.grid(row=3, column=0, padx=5, pady=5)
-        btn_run.grid(row=3, column=1, padx=5, pady=5)
+    movie.release()
+    cv.destroyAllWindows()
 
 
-def main_fct():
-    gui = GUI()
-    gui.mainloop()
+def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
+    """
+    Analyze average color of each frame. Build clusters and output one screenshot each.
+    :param movie_path:
+    Path of the movie file
+    :param n_clusters:
+    number of clusters
+    :param skip_frames:
+    number of frames to skip, severely enhances speed
+    :return:
+    """
+    assert movie_path.is_file(), "File does not exist"
+    print('Opening movie %s' % str(movie_path))
+    movie = cv.VideoCapture(str(movie_path), cv.CAP_ANY)
+    color_lst = []
+    print('Analyzing frames...')
+    current_frame = 0
+    while movie.isOpened():
+        ret, frame = movie.read()
+        # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
+        avg_color = frames.get_color_avg(frame)
+        color_lst.append(avg_color)
+        current_frame += skip_frames + 1
+        print("Current frame: %i" % current_frame)
+        movie.set(cv.CAP_PROP_POS_FRAMES, current_frame - 1)
+    list_cluster = frames.get_list_cluster(color_lst, n_clusters)
+    frame_list = []
+    print('Finding best matches...')
+    for arr in list_cluster.cluster_centers_:
+        lowest_dist = 1000
+        frame_number = 0
+        for i, color in enumerate(color_lst):
+            dist = frames.array_distance(color, arr)
+            if dist < lowest_dist:
+                lowest_dist = dist
+                frame_number = i
+        frame_list.append(frame_number)
+    print('Saving screenshots...')
+    for image in frame_list:
+        frames.save_screenshot(movie, image, skip_frames, movie_path.stem)
+    movie.release()
+    cv.destroyAllWindows()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Movie screen grabber")
+    parser.add_argument('scenario', type=str,
+                        help='Set the Path of the video file.')
+    parser.add_argument('--num', '-n', nargs='?', type=int, default=4,
+                        help='Number of screenshots.')
+    parser.add_argument('--skip', '-s', nargs='?', type=int, default=99,
+                        help='Number of skipped frames.')
+    p_args = parser.parse_args()
+    run_light(Path(p_args.scenario), p_args.num, p_args.skip)
 
 
 if __name__ == '__main__':
-    main_fct()
+    main()
