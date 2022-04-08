@@ -11,7 +11,7 @@ class Moscg:
         self.movie_path = movie_path
         self.num_cluster = num_clusters
         self.skip_frames = skip_frames
-        self.save_dir = Path(movie_path.stem)
+        self.save_dir = Path("res", movie_path.stem)
         self.movie = None
         self.open_movie()
 
