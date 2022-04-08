@@ -6,8 +6,8 @@ To run this program you need a python environment. Necessary packages are listed
 `opencv-python` might have to be installed via pip
 
 ## Run
-Running `moscg.py` creates a GUI to input options.  
-`main.py` allows running the simulation directly from the command line or IDE.
+Running `gui.py` creates a GUI to input options.  
+`moscg.py` allows running the simulation directly from the command line or IDE.
 
 A command line call could look like this:  
 `moscg movie.mkv --num 6 --skip 499`  
