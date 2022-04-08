@@ -4,6 +4,28 @@ from sklearn.cluster import KMeans
 from pathlib import Path
 
 
+class Frame:
+    def __init__(self, moscg, frame, frame_number: int, avg: bool = True, hist: bool = False):
+        self.frame = frame
+        self.number = frame_number
+        self.moscg = moscg
+        if avg:
+            self.avg_color = self.get_color_avg()
+
+    def get_color_avg(self):
+        image = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
+        avg_row_col = np.average(image, axis=0)
+        avg_color = np.average(avg_row_col, axis=0)
+        avg_color = np.uint8(avg_color)
+        return avg_color
+
+    def save_screenshot(self):
+        subdir = Path(self.moscg.save_dir)
+        subdir.mkdir(exist_ok=True)
+        file_path = Path(subdir, "frame%d.jpg" % self.number)
+        cv.imwrite(str(file_path), self.frame)
+
+
 def get_color_cluster(frame: np.ndarray, num_clusters: int):
     image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     # reshape the image to be a list of pixels
@@ -12,24 +34,6 @@ def get_color_cluster(frame: np.ndarray, num_clusters: int):
     clt = KMeans(n_clusters=num_clusters)
     clt.fit(image)
     return clt
-
-
-def get_color_avg(frame):
-    image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    avg_row_col = np.average(image, axis=0)
-    avg_color = np.average(avg_row_col, axis=0)
-    avg_color = np.uint8(avg_color)
-    return avg_color
-
-
-def get_list_cluster(lst, num_clusters: int):
-    clt = KMeans(num_clusters)
-    clt.fit(lst)
-    return clt
-
-
-def array_distance(test_array, base_array):
-    return np.linalg.norm(test_array - base_array)
 
 
 def centroid_histogram(clt):
@@ -44,6 +48,7 @@ def centroid_histogram(clt):
     return hist
 
 
+# the following functions are currently unused and not yet implemented
 def plot_colors(hist, centroids):
     # initialize the bar chart representing the relative frequency
     # of each of the colors
@@ -59,14 +64,3 @@ def plot_colors(hist, centroids):
 
     # return the bar chart
     return bar
-
-
-def save_screenshot(movie, frame_number: int, skip_frames: int, subdir):
-    frame_number = (skip_frames + 1) * frame_number
-    movie.set(cv.CAP_PROP_POS_FRAMES,  frame_number - 1)
-    res, frame = movie.read()
-    assert res, 'Error occured while saving screenshot, frame number %d could not be found' % frame_number
-    subdir = Path(subdir)
-    subdir.mkdir(exist_ok=True)
-    file_path = Path(subdir, "frame%d.jpg" % frame_number)
-    cv.imwrite(str(file_path), frame)
