@@ -66,6 +66,7 @@ class Moscg:
         cv.destroyAllWindows()
 
 
+# TODO: implement the following function in OOP
 def run_light(movie_path: Path, n_clusters: int, skip_frames: int):
     """
     Analyze average color of each frame. Build clusters and output one screenshot each.

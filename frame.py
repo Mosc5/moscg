@@ -26,6 +26,7 @@ class Frame:
         cv.imwrite(str(file_path), self.frame)
 
 
+# TODO: implement the following function in OOP
 def get_color_cluster(frame: np.ndarray, num_clusters: int):
     image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     # reshape the image to be a list of pixels
@@ -36,6 +37,7 @@ def get_color_cluster(frame: np.ndarray, num_clusters: int):
     return clt
 
 
+# TODO: implement the following function in OOP
 def centroid_histogram(clt):
     # grab the number of different clusters and create a histogram
     # based on the number of pixels assigned to each cluster
@@ -48,7 +50,7 @@ def centroid_histogram(clt):
     return hist
 
 
-# the following functions are currently unused and not yet implemented
+# TODO: implement the following function in OOP
 def plot_colors(hist, centroids):
     # initialize the bar chart representing the relative frequency
     # of each of the colors
