@@ -7,10 +7,11 @@ from sklearn.cluster import KMeans
 
 
 class Moscg:
-    def __init__(self, movie_path, num_clusters: int = 4, skip_frames: int = 99):
+    def __init__(self, movie_path, num_clusters: int = 4, skip_frames: int = 99, save_adjacent: int = 0):
         self.movie_path = movie_path
         self.num_cluster = num_clusters
         self.skip_frames = skip_frames
+        self.save_adj = save_adjacent
         self.save_dir = Path("res", movie_path.stem)
         self.movie = None
         self.open_movie()
@@ -61,8 +62,10 @@ class Moscg:
                     lowest_dist = dist
                     frame_number = i
             frame_lst[frame_number].save_screenshot()
+            if self.save_adj:
+                frame_lst[frame_number].save_adjacent_frames(self.save_adj)
 
-        print('Saving screenshots...')
+        print('Screenshots saved. Run finished.')
         self.movie.release()
         cv.destroyAllWindows()
 
@@ -107,9 +110,11 @@ def main():
                         help='Number of screenshots.')
     parser.add_argument('--skip', '-s', nargs='?', type=int, default=99,
                         help='Number of skipped frames.')
+    parser.add_argument('--save_adjacent', nargs='?', type=int, default=0,
+                        help='Number of extra saved frames in each direction.')
     p_args = parser.parse_args()
 
-    foo = Moscg(Path(p_args.scenario), p_args.num, p_args.skip)
+    foo = Moscg(Path(p_args.scenario), p_args.num, p_args.skip, p_args.save_adjacent)
     foo.run()
 
 

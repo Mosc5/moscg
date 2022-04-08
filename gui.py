@@ -13,6 +13,7 @@ class GUI(tk.Tk):
         self.title("moscg")
         self.clusters = tk.IntVar(value=4)
         self.skip_frames = tk.IntVar(value=99)
+        self.save_adj = tk.IntVar(value=0)
         self.desc = tk.StringVar()
 
         self.draw()
@@ -26,7 +27,7 @@ class GUI(tk.Tk):
         if self.filename == '':
             showinfo("Error", "Select a video file!")
         else:
-            foo = moscg.Moscg(Path(self.filename), self.clusters.get(), self.skip_frames.get())
+            foo = moscg.Moscg(Path(self.filename), self.clusters.get(), self.skip_frames.get(), self.save_adj.get())
             foo.run()
 
     def draw(self):
@@ -34,9 +35,11 @@ class GUI(tk.Tk):
         lbl_desc = tk.Label(textvariable=self.desc)
         lbl_cluster = tk.Label(text="Number of screenshots:")
         lbl_skip = tk.Label(text="Number of skipped frames:")
+        lbl_adj = tk.Label(text="Number of additional adjacent frames to save:")
 
         ent_cluster = tk.Entry(textvariable=self.clusters)
         ent_skip = tk.Entry(textvariable=self.skip_frames)
+        ent_adj = tk.Entry(textvariable=self.save_adj)
 
         btn_file = tk.Button(text="Select movie file", command=self.select_file)
         btn_run = tk.Button(text="Run", command=self.run)
@@ -46,8 +49,10 @@ class GUI(tk.Tk):
         ent_cluster.grid(row=1, column=1, padx=5, pady=5)
         lbl_skip.grid(row=2, column=0, padx=5, pady=5)
         ent_skip.grid(row=2, column=1, padx=5, pady=5)
-        btn_file.grid(row=3, column=0, padx=5, pady=5)
-        btn_run.grid(row=3, column=1, padx=5, pady=5)
+        lbl_adj.grid(row=3, column=0, padx=5, pady=5)
+        ent_adj.grid(row=3, column=1, padx=5, pady=5)
+        btn_file.grid(row=4, column=0, padx=5, pady=5)
+        btn_run.grid(row=4, column=1, padx=5, pady=5)
 
 
 def main_fct():
