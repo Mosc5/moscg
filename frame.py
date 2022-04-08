@@ -25,6 +25,16 @@ class Frame:
         file_path = Path(subdir, "frame%d.jpg" % self.number)
         cv.imwrite(str(file_path), self.frame)
 
+    def save_adjacent_frames(self, n: int):
+        mv = self.moscg.open_movie()
+        for i in range(self.number - n, self.number + n + 1):
+            if i != self.number:
+                mv.set(cv.CAP_PROP_POS_FRAMES, i)
+                ret, movie_frame = mv.read()
+                assert ret, 'Error occured while saving screenshot, frame number %d could not be found' % i
+                frames = Frame(self.moscg, movie_frame, i)
+                frames.save_screenshot()
+
 
 # TODO: implement the following function in OOP
 def get_color_cluster(frame: np.ndarray, num_clusters: int):
