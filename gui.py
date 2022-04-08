@@ -26,7 +26,8 @@ class GUI(tk.Tk):
         if self.filename == '':
             showinfo("Error", "Select a video file!")
         else:
-            moscg.run_light(Path(self.filename), self.clusters.get(), self.skip_frames.get())
+            foo = moscg.Moscg(Path(self.filename), self.clusters.get(), self.skip_frames.get())
+            foo.run()
 
     def draw(self):
         self.desc.set("Movie screen grabber. Choose a movie file to proceed.")
