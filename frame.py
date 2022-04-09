@@ -21,7 +21,7 @@ class Frame:
 
     def save_screenshot(self):
         subdir = Path(self.moscg.save_dir)
-        subdir.mkdir(exist_ok=True)
+        subdir.mkdir(parents=True, exist_ok=True)
         file_path = Path(subdir, "frame%d.jpg" % self.number)
         cv.imwrite(str(file_path), self.frame)
 
