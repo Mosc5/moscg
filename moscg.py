@@ -49,7 +49,7 @@ class Moscg:
             color_lst.append(frames.avg_color)
             current_frame += self.skip_frames + 1
             print("Current frame: %i" % current_frame)
-            self.movie.set(cv.CAP_PROP_POS_FRAMES, current_frame)
+            self.movie.set(cv.CAP_PROP_POS_FRAMES, current_frame-1)
 
         list_cluster = self.get_list_cluster(color_lst)
         print('Finding best matches...')

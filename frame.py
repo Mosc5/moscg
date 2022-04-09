@@ -28,8 +28,8 @@ class Frame:
     def save_adjacent_frames(self, n: int):
         mv = self.moscg.open_movie()
         for i in range(self.number - n, self.number + n + 1):
-            if i != self.number:
-                mv.set(cv.CAP_PROP_POS_FRAMES, i)
+            if i >= 0 and i != self.number:
+                mv.set(cv.CAP_PROP_POS_FRAMES, i-1)
                 ret, movie_frame = mv.read()
                 assert ret, 'Error occured while saving screenshot, frame number %d could not be found' % i
                 frames = Frame(self.moscg, movie_frame, i)
