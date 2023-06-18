@@ -1,5 +1,7 @@
 # Local folders
 res/
+results/
+data/
 
 # IntelliJ
 .idea/

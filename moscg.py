@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import frame
 import argparse
+import datetime
 from sklearn.cluster import KMeans
 
 
@@ -12,7 +13,7 @@ class Moscg:
         self.num_cluster = num_clusters
         self.skip_frames = skip_frames
         self.save_adj = save_adjacent
-        self.save_dir = Path("res", movie_path.stem)
+        self.save_dir = Path("results", movie_path.stem + "_" + datetime.datetime.isoformat(datetime.datetime.now(), timespec='seconds'))
         self.movie = None
         self.open_movie()
 
@@ -24,7 +25,7 @@ class Moscg:
         return self.movie
 
     def get_list_cluster(self, lst):
-        clt = KMeans(self.num_cluster)
+        clt = KMeans(self.num_cluster, n_init=10)
         clt.fit(lst)
         return clt
 
@@ -37,19 +38,19 @@ class Moscg:
         frame_lst = []
         color_lst = []
         print('Analyzing frames...')
-        current_frame = 0
+        current_frame_number = 0
         while self.movie.isOpened():
             ret, movie_frame = self.movie.read()
             # if frame is read correctly ret is True
             if not ret:
                 print("Can't receive frame (stream end?). Exiting ...")
                 break
-            frames = frame.Frame(self, movie_frame, current_frame)
+            frames = frame.Frame(self, movie_frame, current_frame_number)
             frame_lst.append(frames)
             color_lst.append(frames.avg_color)
-            current_frame += self.skip_frames + 1
-            print("Current frame: %i" % current_frame)
-            self.movie.set(cv.CAP_PROP_POS_FRAMES, current_frame-1)
+            current_frame_number += self.skip_frames + 1
+            print("Current frame: %i" % current_frame_number)
+            self.movie.set(cv.CAP_PROP_POS_FRAMES, current_frame_number-1)
 
         list_cluster = self.get_list_cluster(color_lst)
         print('Finding best matches...')
@@ -104,7 +105,7 @@ def run_hist(movie_path: Path, n_clusters: int):
 
 def main():
     parser = argparse.ArgumentParser(description="Movie screen grabber")
-    parser.add_argument('scenario', type=str,
+    parser.add_argument('file_path', type=str,
                         help='Set the Path of the video file.')
     parser.add_argument('--num', '-n', nargs='?', type=int, default=4,
                         help='Number of screenshots.')
@@ -114,7 +115,7 @@ def main():
                         help='Number of extra saved frames in each direction.')
     p_args = parser.parse_args()
 
-    foo = Moscg(Path(p_args.scenario), p_args.num, p_args.skip, p_args.save_adjacent)
+    foo = Moscg(Path(p_args.file_path), p_args.num, p_args.skip, p_args.save_adjacent)
     foo.run()
 
 

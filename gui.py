@@ -29,6 +29,14 @@ class GUI(tk.Tk):
         else:
             foo = moscg.Moscg(Path(self.filename), self.clusters.get(), self.skip_frames.get(), self.save_adj.get())
             foo.run()
+            self.create_finish_popup()
+
+    def create_finish_popup(self):
+        # pop = tk.Toplevel(self)
+        # pop.geometry("750x250")
+        # pop.title("Child Window")
+        # tk.Label(pop, text= "Hello World!", font=('Mistral 18 bold')).place(x=150,y=80)
+        showinfo("Done!", "Frame analysis complete!")
 
     def draw(self):
         self.desc.set("Movie screen grabber. Choose a movie file to proceed.")
@@ -55,10 +63,10 @@ class GUI(tk.Tk):
         btn_run.grid(row=4, column=1, padx=5, pady=5)
 
 
-def main_fct():
+def main():
     gui = GUI()
     gui.mainloop()
 
 
 if __name__ == '__main__':
-    main_fct()
+    main()

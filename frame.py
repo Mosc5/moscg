@@ -2,10 +2,14 @@ import cv2 as cv
 import numpy as np
 from sklearn.cluster import KMeans
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from moscg import Moscg
 
 
 class Frame:
-    def __init__(self, moscg, frame, frame_number: int, avg: bool = True, hist: bool = False):
+    def __init__(self, moscg: "Moscg", frame, frame_number: int, avg: bool = True, hist: bool = False):
         self.frame = frame
         self.number = frame_number
         self.moscg = moscg
@@ -42,7 +46,7 @@ def get_color_cluster(frame: np.ndarray, num_clusters: int):
     # reshape the image to be a list of pixels
     image = image.reshape((image.shape[0] * image.shape[1], 3))
     # cluster the pixel intensities
-    clt = KMeans(n_clusters=num_clusters)
+    clt = KMeans(n_clusters=num_clusters, n_init=10)
     clt.fit(image)
     return clt
 
